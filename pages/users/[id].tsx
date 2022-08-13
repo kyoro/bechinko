@@ -1,9 +1,31 @@
-import { useRouter } from 'next/router'
+import { NextPageContext } from 'next'
 
-const Post = () => {
-  const router = useRouter()
-  const { id, name } = router.query
-  return <p>Post: {id} --- {name}</p>
+type Props = {
+  userData: {
+    id: string
+    name: string
+  }
 }
 
-export default Post
+const UserPage = ({userData}: Props) => {
+  return (
+    <div>
+      <h1>User info</h1>
+      <p>id: {userData.id}</p>
+      <p>name: {userData.name}</p>
+    </div>
+  )
+}
+
+export async function getServerSideProps({query}: NextPageContext){
+  const res = await fetch(`http://localhost:3000/api/hello/${query.id}`)
+  const json = await res.json()
+
+  return {
+    props: {
+      userData: json
+    }
+  }
+}
+
+export default UserPage
